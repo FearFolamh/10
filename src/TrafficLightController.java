@@ -1,29 +1,29 @@
-import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class TrafficLightController {
     private TrafficLightModel model;
     private TrafficLightView view;
-    private Timer timer; // Таймер для изменения состояния светофора
+    private final Timer timer;
 
     public TrafficLightController(TrafficLightModel model, TrafficLightView view) {
         this.model = model;
         this.view = view;
         this.view.show();
 
-        // Таймер, который будет переключать состояние светофора
+        // Таймер для переключения состояния светофора
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int duration = model.getDurationForCurrentState();
-                if (duration == 0) return;
-
                 model.nextState();
                 view.setTrafficLightState(model.getCurrentState());
-                timer.setDelay(duration * 1000); // меняем задержку в зависимости от состояния
+                timer.setDelay(model.getDurationForCurrentState() * 1000); // Обновить интервал
             }
         });
+
+        // Добавление обработчика для кнопки
+        view.addControlButtonListener(e -> toggleSimulation());
     }
 
     public void startSimulation() {
